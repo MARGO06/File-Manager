@@ -13,6 +13,29 @@ const farewellAndExit = (userName) => {
   process.exit(0);
 };
 
+const goUp = async () => {
+  const dirname = process.cwd();
+  const newDir = path.resolve(dirname, "..");
+
+  if (dirname.endsWith("File-Manager")) {
+    process.stdout.write(
+      `You are already at the root directory. Cannot go up.\nYou are now in ${process.cwd()}\nEnter your command:\n`
+    );
+    return;
+  }
+
+  try {
+    await access(newDir, constants.F_OK);
+    process.chdir(newDir);
+    process.stdout.write(
+      `You are now in ${process.cwd()}\nEnter your command: `
+    );
+  } catch (err) {
+    process.stdout.write(`Cannot access parent directory.\n`);
+    throw err;
+  }
+};
+
 const changeAndVerifyDirectory = async (directory) => {
   const dirname = process.cwd();
   const newDirectory = path.resolve(dirname, directory);
@@ -49,6 +72,8 @@ const changeDirectory = async (input) => {
           `Operation failed: "${targetDir}".Please try again!\nYou are currently in ${process.cwd()}\nEnter your command:`
         );
     }
+  } else if (command === "up") {
+    await goUp();
   }
 };
 
