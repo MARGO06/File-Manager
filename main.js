@@ -1,7 +1,8 @@
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import path, { dirname } from "node:path";
-import { access, constants } from "node:fs/promises";
+import { access, constants, readdir } from "node:fs/promises";
+import { showCurrentDirectory } from "./modules/list/showList.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -72,8 +73,10 @@ const changeDirectory = async (input) => {
           `Operation failed: "${targetDir}".Please try again!\nYou are currently in ${process.cwd()}\nEnter your command:`
         );
     }
-  } else if (command === "up") {
+  } else if (command[0] === "up") {
     await goUp();
+  } else if (command[0] === "ls") {
+    await showCurrentDirectory();
   }
 };
 
