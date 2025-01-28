@@ -1,9 +1,10 @@
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import path, { dirname } from "node:path";
-import { access, constants, readdir } from "node:fs/promises";
+import { access, constants } from "node:fs/promises";
 import { showCurrentDirectory } from "./modules/list/showList.js";
 import { readFile } from "./modules/fs/read.js";
+import { createFile } from "./modules/fs/create.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -87,6 +88,14 @@ const changeDirectory = async (input) => {
       return;
     }
     await readFile(targetDir);
+  } else if (command[0] === "add") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await createFile(targetDir);
   }
 };
 
