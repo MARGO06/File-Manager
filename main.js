@@ -5,6 +5,7 @@ import { access, constants } from "node:fs/promises";
 import { showCurrentDirectory } from "./modules/list/showList.js";
 import { readFile } from "./modules/fs/read.js";
 import { createFile, createDirectory } from "./modules/fs/create.js";
+import { renameFile } from "./modules/fs/rename.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -104,6 +105,17 @@ const changeDirectory = async (input) => {
       return;
     }
     await createDirectory(targetDir);
+  } else if (command[0] === "rn") {
+    const oldFile = command[1];
+    const newFile = command[2];
+
+    if (!oldFile || !newFile) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await renameFile(oldFile, newFile);
   }
 };
 
