@@ -4,7 +4,7 @@ import path, { dirname } from "node:path";
 import { access, constants } from "node:fs/promises";
 import { showCurrentDirectory } from "./modules/list/showList.js";
 import { readFile } from "./modules/fs/read.js";
-import { createFile } from "./modules/fs/create.js";
+import { createFile, createDirectory } from "./modules/fs/create.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -22,7 +22,7 @@ const goUp = async () => {
 
   if (dirname.endsWith("File-Manager")) {
     process.stdout.write(
-      `You are already at the root directory. Cannot go up.\nYou are now in ${process.cwd()}\nEnter your command:\n`
+      `You are already at the root directory. Cannot go up.\nYou are currently in ${process.cwd()}\nEnter your command:`
     );
     return;
   }
@@ -31,7 +31,7 @@ const goUp = async () => {
     await access(newDir, constants.F_OK);
     process.chdir(newDir);
     process.stdout.write(
-      `You are now in ${process.cwd()}\nEnter your command: `
+      `You are currently in ${process.cwd()}\nEnter your command:`
     );
   } catch (err) {
     process.stdout.write(`Cannot access parent directory.\n`);
@@ -96,6 +96,14 @@ const changeDirectory = async (input) => {
       return;
     }
     await createFile(targetDir);
+  } else if (command[0] === "mkdir") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await createDirectory(targetDir);
   }
 };
 

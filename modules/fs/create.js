@@ -1,17 +1,34 @@
-import { writeFile, access, constants } from "fs/promises";
+import { writeFile, access, constants, mkdir } from "fs/promises";
 
-export const createFile = async (input) => {
+const checkPathExists = async (name) => {
   try {
-    await access(`${process.cwd()}/${input}`, constants.F_OK);
-    throw new Error("FS operation failed");
+    await access(`${process.cwd()}/${name}`, constants.F_OK);
+    return true;
   } catch (err) {
     if (err.code === "ENOENT") {
-      await writeFile(input, "", "utf8");
-      process.stdout.write(
-        `You are currently in ${process.cwd()}\nEnter your command:`
-      );
+      return false;
     } else {
       throw err;
     }
   }
+};
+
+const handleFileCreation = async (input, createFunc) => {
+  const exists = await checkPathExists(input);
+  if (!exists) {
+    await createFunc(input);
+    process.stdout.write(
+      `You are currently in ${process.cwd()}\nEnter your command:`
+    );
+  } else {
+    throw new Error(`The file or directory "${input}" already exists.`);
+  }
+};
+
+export const createFile = async (input) => {
+  await handleFileCreation(input, writeFile.bind(null, input, "", "utf8"));
+};
+
+export const createDirectory = async (input) => {
+  await handleFileCreation(input, mkdir.bind(null, input, { recursive: true }));
 };
