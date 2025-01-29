@@ -6,6 +6,7 @@ import { showCurrentDirectory } from "./modules/list/showList.js";
 import { readFile } from "./modules/fs/read.js";
 import { createFile, createDirectory } from "./modules/fs/create.js";
 import { renameFile } from "./modules/fs/rename.js";
+import { copyFile } from "./modules/fs/copy.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -116,6 +117,17 @@ const changeDirectory = async (input) => {
       return;
     }
     await renameFile(oldFile, newFile);
+  } else if (command[0] === "cp") {
+    const oldPath = command[1];
+    const newPath = command[2];
+
+    if (!oldPath || !newPath) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await copyFile(oldPath, newPath);
   }
 };
 
