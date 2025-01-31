@@ -1,4 +1,4 @@
-import { EOL, homedir } from "node:os";
+import { EOL, homedir, userInfo } from "node:os";
 
 export const showEOL = () => {
   console.log(
@@ -12,6 +12,15 @@ export const showEOL = () => {
 
 export const showHomeDir = () => {
   console.log(`Home directory: ${homedir()}`);
+
+  process.stdout.write(
+    `You are currently in ${process.cwd()}\nEnter your command:`
+  );
+};
+
+export const showUser = () => {
+  const user = userInfo();
+  console.log(`User name: ${user.username}`);
 
   process.stdout.write(
     `You are currently in ${process.cwd()}\nEnter your command:`
