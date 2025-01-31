@@ -10,6 +10,7 @@ import { copyFile } from "./modules/fs/copy.js";
 import { moveFile } from "./modules/fs/move.js";
 import { deleteFile } from "./modules/fs/delete.js";
 import { showEOL } from "./modules/os/getEOL.js";
+import { showCPUS } from "./modules/os/getCpus.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -74,6 +75,7 @@ const changeDirectory = async (input) => {
       case "list":
       case "fs":
       case "files":
+      case "os":
         await changeAndVerifyDirectory(targetDir);
         break;
       default:
@@ -157,7 +159,11 @@ const changeDirectory = async (input) => {
       console.log("Please enter '--EOL'");
       return;
     }
-    showEOL(argument);
+    if (argument === "--EOL") {
+      showEOL(argument);
+    } else if (argument === "--cpus") {
+      showCPUS(argument);
+    }
   }
 };
 
