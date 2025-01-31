@@ -11,10 +11,11 @@ export const copyFile = async (oldPath, newPath) => {
     const input = createReadStream(oldPath);
     const output = createWriteStream(newPath);
     await pipelineAsync(input, output);
+  } catch (err) {
+    console.error("Error copy file:", err);
+  } finally {
     process.stdout.write(
       `You are currently in ${process.cwd()}\nEnter your command:`
     );
-  } catch (err) {
-    console.error("Error copy file:", err);
   }
 };

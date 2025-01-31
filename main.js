@@ -8,6 +8,7 @@ import { createFile, createDirectory } from "./modules/fs/create.js";
 import { renameFile } from "./modules/fs/rename.js";
 import { copyFile } from "./modules/fs/copy.js";
 import { moveFile } from "./modules/fs/move.js";
+import { deleteFile } from "./modules/fs/delete.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -140,6 +141,14 @@ const changeDirectory = async (input) => {
       return;
     }
     await moveFile(oldPath, newPath);
+  } else if (command[0] === "rm") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await deleteFile(targetDir);
   }
 };
 
