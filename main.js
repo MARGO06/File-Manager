@@ -9,7 +9,7 @@ import { renameFile } from "./modules/fs/rename.js";
 import { copyFile } from "./modules/fs/copy.js";
 import { moveFile } from "./modules/fs/move.js";
 import { deleteFile } from "./modules/fs/delete.js";
-import { showEOL } from "./modules/os/getEOL.js";
+import { showEOL, showHomeDir } from "./modules/os/getEOL.js";
 import { showCPUS } from "./modules/os/getCpus.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
@@ -163,6 +163,8 @@ const changeDirectory = async (input) => {
       showEOL(argument);
     } else if (argument === "--cpus") {
       showCPUS(argument);
+    } else if (argument === "--homedir") {
+      showHomeDir(argument);
     }
   }
 };
