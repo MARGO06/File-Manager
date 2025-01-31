@@ -1,15 +1,15 @@
 import { createReadStream, createWriteStream } from "node:fs";
-import { createBrotliCompress } from "node:zlib";
+import { createBrotliCompress, createBrotliDecompress } from "node:zlib";
 import { pipeline } from "node:stream";
 import { access, constants } from "node:fs/promises";
 
-export const compressFile = async (oldPath, newPath) => {
+export const transformFile = async (oldPath, newPath, transformFunc) => {
   try {
     await access(oldPath, constants.F_OK);
     const input = createReadStream(oldPath);
     const output = createWriteStream(newPath);
 
-    const brotli = createBrotliCompress();
+    const brotli = transformFunc();
 
     pipeline(input, brotli, output, (err) => {
       if (err) {
@@ -23,4 +23,12 @@ export const compressFile = async (oldPath, newPath) => {
       `You are currently in ${process.cwd()}\nEnter your command:`
     );
   }
+};
+
+export const compressFile = async (oldPath, newPath) => {
+  await transformFile(oldPath, newPath, createBrotliCompress);
+};
+
+export const decompressFile = async (oldPath, newPath) => {
+  await transformFile(oldPath, newPath, createBrotliDecompress);
 };
