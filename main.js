@@ -9,6 +9,7 @@ import { renameFile } from "./modules/fs/rename.js";
 import { copyFile } from "./modules/fs/copy.js";
 import { moveFile } from "./modules/fs/move.js";
 import { deleteFile } from "./modules/fs/delete.js";
+import { showEOL } from "./modules/os/getEOL.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -149,6 +150,14 @@ const changeDirectory = async (input) => {
       return;
     }
     await deleteFile(targetDir);
+  } else if (command[0] === "os") {
+    const argument = command[1];
+
+    if (!argument) {
+      console.log("Please enter '--EOL'");
+      return;
+    }
+    showEOL(argument);
   }
 };
 
