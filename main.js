@@ -17,6 +17,7 @@ import {
 } from "./modules/os/getEOL.js";
 import { showCPUS } from "./modules/os/getCpus.js";
 import { calcHash } from "./modules/hash/calcHash.js";
+import { compressFile } from "./modules/zip/compress.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -184,6 +185,17 @@ const changeDirectory = async (input) => {
       return;
     }
     await calcHash(targetDir);
+  } else if (command[0] === "compress") {
+    const oldPath = command[1];
+    const newPath = command[2];
+
+    if (!oldPath || !newPath) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await compressFile(oldPath, newPath);
   }
 };
 
