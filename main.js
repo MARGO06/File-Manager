@@ -1,8 +1,14 @@
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 import path, { dirname } from "node:path";
-import { access, constants, readdir } from "node:fs/promises";
+import { access, constants } from "node:fs/promises";
 import { showCurrentDirectory } from "./modules/list/showList.js";
+import { readFile } from "./modules/fs/read.js";
+import { createFile, createDirectory } from "./modules/fs/create.js";
+import { renameFile } from "./modules/fs/rename.js";
+import { copyFile } from "./modules/fs/copy.js";
+import { moveFile } from "./modules/fs/move.js";
+import { deleteFile } from "./modules/fs/delete.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -20,7 +26,7 @@ const goUp = async () => {
 
   if (dirname.endsWith("File-Manager")) {
     process.stdout.write(
-      `You are already at the root directory. Cannot go up.\nYou are now in ${process.cwd()}\nEnter your command:\n`
+      `You are already at the root directory. Cannot go up.\nYou are currently in ${process.cwd()}\nEnter your command:`
     );
     return;
   }
@@ -29,7 +35,7 @@ const goUp = async () => {
     await access(newDir, constants.F_OK);
     process.chdir(newDir);
     process.stdout.write(
-      `You are now in ${process.cwd()}\nEnter your command: `
+      `You are currently in ${process.cwd()}\nEnter your command:`
     );
   } catch (err) {
     process.stdout.write(`Cannot access parent directory.\n`);
@@ -65,6 +71,7 @@ const changeDirectory = async (input) => {
     switch (targetDir) {
       case "modules":
       case "list":
+      case "fs":
       case "files":
         await changeAndVerifyDirectory(targetDir);
         break;
@@ -77,6 +84,71 @@ const changeDirectory = async (input) => {
     await goUp();
   } else if (command[0] === "ls") {
     await showCurrentDirectory();
+  } else if (command[0] === "cat") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await readFile(targetDir);
+  } else if (command[0] === "add") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await createFile(targetDir);
+  } else if (command[0] === "mkdir") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await createDirectory(targetDir);
+  } else if (command[0] === "rn") {
+    const oldFile = command[1];
+    const newFile = command[2];
+
+    if (!oldFile || !newFile) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await renameFile(oldFile, newFile);
+  } else if (command[0] === "cp") {
+    const oldPath = command[1];
+    const newPath = command[2];
+
+    if (!oldPath || !newPath) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await copyFile(oldPath, newPath);
+  } else if (command[0] === "mv") {
+    const oldPath = command[1];
+    const newPath = command[2];
+
+    if (!oldPath || !newPath) {
+      console.log(
+        "Both the path to the file and the new name of the file must be provided."
+      );
+      return;
+    }
+    await moveFile(oldPath, newPath);
+  } else if (command[0] === "rm") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await deleteFile(targetDir);
   }
 };
 
