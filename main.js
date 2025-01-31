@@ -16,6 +16,7 @@ import {
   showUser,
 } from "./modules/os/getEOL.js";
 import { showCPUS } from "./modules/os/getCpus.js";
+import { calcHash } from "./modules/hash/calcHash.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -175,6 +176,14 @@ const changeDirectory = async (input) => {
     } else if (argument === "--architecture") {
       showArchitecture(argument);
     }
+  } else if (command[0] === "hash") {
+    const targetDir = command[1];
+
+    if (!targetDir) {
+      console.log("Please specify a directory to change to.");
+      return;
+    }
+    await calcHash(targetDir);
   }
 };
 
