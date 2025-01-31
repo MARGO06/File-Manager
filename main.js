@@ -9,6 +9,13 @@ import { renameFile } from "./modules/fs/rename.js";
 import { copyFile } from "./modules/fs/copy.js";
 import { moveFile } from "./modules/fs/move.js";
 import { deleteFile } from "./modules/fs/delete.js";
+import {
+  showArchitecture,
+  showEOL,
+  showHomeDir,
+  showUser,
+} from "./modules/os/getEOL.js";
+import { showCPUS } from "./modules/os/getCpus.js";
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -73,6 +80,7 @@ const changeDirectory = async (input) => {
       case "list":
       case "fs":
       case "files":
+      case "os":
         await changeAndVerifyDirectory(targetDir);
         break;
       default:
@@ -149,6 +157,24 @@ const changeDirectory = async (input) => {
       return;
     }
     await deleteFile(targetDir);
+  } else if (command[0] === "os") {
+    const argument = command[1];
+
+    if (!argument) {
+      console.log("Please enter '--EOL'");
+      return;
+    }
+    if (argument === "--EOL") {
+      showEOL(argument);
+    } else if (argument === "--cpus") {
+      showCPUS(argument);
+    } else if (argument === "--homedir") {
+      showHomeDir(argument);
+    } else if (argument === "--username") {
+      showUser(argument);
+    } else if (argument === "--architecture") {
+      showArchitecture(argument);
+    }
   }
 };
 
