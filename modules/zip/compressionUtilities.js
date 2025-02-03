@@ -2,6 +2,7 @@ import { createReadStream, createWriteStream } from "node:fs";
 import { createBrotliCompress, createBrotliDecompress } from "node:zlib";
 import { pipeline } from "node:stream";
 import { access, constants } from "node:fs/promises";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 export const transformFile = async (oldPath, newPath, transformFunc) => {
   try {
@@ -17,11 +18,9 @@ export const transformFile = async (oldPath, newPath, transformFunc) => {
       }
     });
   } catch (err) {
-    console.error("Error accessing the file:", err);
+    console.error("Operation failed: ", err);
   } finally {
-    process.stdout.write(
-      `You are currently in ${process.cwd()}\nEnter your command:`
-    );
+    pathToWorkingDirectory();
   }
 };
 

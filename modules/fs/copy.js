@@ -2,6 +2,7 @@ import { createReadStream, createWriteStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 const pipelineAsync = promisify(pipeline);
 
@@ -12,10 +13,8 @@ export const copyFile = async (oldPath, newPath) => {
     const output = createWriteStream(newPath);
     await pipelineAsync(input, output);
   } catch (err) {
-    console.error("Error copy file:", err);
+    console.error("Operation failed:", err);
   } finally {
-    process.stdout.write(
-      `You are currently in ${process.cwd()}\nEnter your command:`
-    );
+    pathToWorkingDirectory();
   }
 };

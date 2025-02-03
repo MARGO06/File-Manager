@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 export const calcHash = async (nameFile) => {
   const hash = createHash("sha256");
@@ -22,10 +23,8 @@ export const calcHash = async (nameFile) => {
       });
     });
   } catch (err) {
-    console.error("Error accessing the file:", err);
+    console.error("Operation failed: ", err);
   } finally {
-    process.stdout.write(
-      `You are currently in ${process.cwd()}\nEnter your command:`
-    );
+    pathToWorkingDirectory();
   }
 };
