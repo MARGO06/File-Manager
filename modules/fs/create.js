@@ -1,4 +1,5 @@
 import { writeFile, access, constants, mkdir } from "fs/promises";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 const checkPathExists = async (name) => {
   try {
@@ -7,8 +8,6 @@ const checkPathExists = async (name) => {
   } catch (err) {
     if (err.code === "ENOENT") {
       return false;
-    } else {
-      throw err;
     }
   }
 };
@@ -17,9 +16,7 @@ const handleFileCreation = async (input, createFunc) => {
   const exists = await checkPathExists(input);
   if (!exists) {
     await createFunc(input);
-    process.stdout.write(
-      `You are currently in ${process.cwd()}\nEnter your command:`
-    );
+    pathToWorkingDirectory();
   } else {
     throw new Error(`The file or directory "${input}" already exists.`);
   }

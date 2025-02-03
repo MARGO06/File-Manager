@@ -1,5 +1,6 @@
 import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 export const readFile = async (input) => {
   try {
@@ -17,7 +18,7 @@ export const readFile = async (input) => {
       console.error("Error reading the file:", err);
     });
   } catch (err) {
-    console.error("No such file or directory:", err);
-    throw err;
+    console.error("Operation failed:", err);
+    pathToWorkingDirectory();
   }
 };

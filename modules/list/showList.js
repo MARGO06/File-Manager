@@ -1,4 +1,5 @@
 import { readdir, stat } from "node:fs/promises";
+import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
 const sortFiles = (filesDetails) => {
   return filesDetails.sort((a, b) => {
@@ -30,13 +31,11 @@ export const showCurrentDirectory = async () => {
 
     sortedFiles.forEach((file, index) => {
       const directory = file.isDirectory ? "directory" : "file";
-      process.stdout.write(`${index} ${file.name} ${directory}\n`);
+      process.stdout.write(`${index + 1} ${file.name} ${directory}\n`);
     });
-
-    process.stdout.write(
-      `You are currently in ${process.cwd()}\nEnter your command:`
-    );
   } catch (error) {
     console.error("Error reading directory:", err);
+  } finally {
+    pathToWorkingDirectory();
   }
 };
