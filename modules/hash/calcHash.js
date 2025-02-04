@@ -3,13 +3,14 @@ import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
-export const calcHash = async (nameFile) => {
+export const calcHash = async (directory, path) => {
+  const fullPath = `${directory}/${path}`;
   const hash = createHash("sha256");
   try {
-    await access(nameFile, constants.F_OK);
+    await access(fullPath, constants.F_OK);
 
     await new Promise((resolve, reject) => {
-      const input = createReadStream(nameFile);
+      const input = createReadStream(fullPath);
       input.on("data", (chunk) => hash.update(chunk));
 
       input.on("end", () => {
@@ -25,6 +26,6 @@ export const calcHash = async (nameFile) => {
   } catch (err) {
     console.error("Operation failed: ", err);
   } finally {
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(directory);
   }
 };

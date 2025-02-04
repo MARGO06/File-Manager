@@ -82,28 +82,28 @@ export const goUp = async () => {
   }
 };
 
-export const showOSDetails = (argument) => {
+export const showOSDetails = (directory, argument) => {
   switch (argument) {
     case "--EOL":
-      showEOL(argument);
+      showEOL(directory, argument);
       break;
     case "--cpus":
-      showCPUS(argument);
+      showCPUS(directory, argument);
       break;
     case "--homedir":
-      showHomeDir(argument);
+      showHomeDir(directory, argument);
       break;
     case "--username":
-      showUser(argument);
+      showUser(directory, argument);
       break;
     case "--architecture":
-      showArchitecture(argument);
+      showArchitecture(directory, argument);
       break;
     default:
       console.log(
         `Invalid input ${argument}. Please use '--EOL', '--cpus', '--homedir', '--username', or '--architecture'.`
       );
-      pathToWorkingDirectory();
+      pathToWorkingDirectory(directory);
   }
 };
 

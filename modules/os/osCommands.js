@@ -1,35 +1,35 @@
 import { arch, EOL, homedir, userInfo, cpus } from "node:os";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
-export const showEOL = () => {
+export const showEOL = (directory) => {
   console.log(
     `End-Of-Line (EOL) for the current system is: ${JSON.stringify(EOL)}`
   );
 
-  pathToWorkingDirectory();
+  pathToWorkingDirectory(directory);
 };
 
-export const showHomeDir = () => {
+export const showHomeDir = (directory) => {
   console.log(`Home directory: ${homedir()}`);
 
-  pathToWorkingDirectory();
+  pathToWorkingDirectory(directory);
 };
 
-export const showUser = () => {
+export const showUser = (directory) => {
   const user = userInfo();
   console.log(`User name: ${user.username}`);
 
-  pathToWorkingDirectory();
+  pathToWorkingDirectory(directory);
 };
 
-export const showArchitecture = () => {
+export const showArchitecture = (directory) => {
   const architecture = arch();
   console.log(`Architecture: ${architecture}`);
 
-  pathToWorkingDirectory();
+  pathToWorkingDirectory(directory);
 };
 
-export const showCPUS = () => {
+export const showCPUS = (directory) => {
   const numbersCpus = cpus().length;
 
   const allCpus = cpus();
@@ -42,5 +42,5 @@ export const showCPUS = () => {
     );
   });
 
-  pathToWorkingDirectory();
+  pathToWorkingDirectory(directory);
 };
