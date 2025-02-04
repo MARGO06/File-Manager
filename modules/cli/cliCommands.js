@@ -41,7 +41,7 @@ export const manageOSFileOperation = async (
     pathToWorkingDirectory(currentDir);
     return;
   }
-  await executeOSFileOperation(argument);
+  await executeOSFileOperation(currentDir, argument);
 };
 
 export const changeAndVerifyDirectory = async (directory) => {
@@ -107,7 +107,7 @@ export const showOSDetails = (argument) => {
   }
 };
 
-export const moveOnFolders = async (folderName) => {
+export const moveOnFolders = async (directory, folderName) => {
   try {
     if (folderName) {
       const newDir = await changeAndVerifyDirectory(folderName);
@@ -118,11 +118,11 @@ export const moveOnFolders = async (folderName) => {
       console.log(
         `Operation failed:"${folderName}" does not exist or cannot be accessed.`
       );
-      pathToWorkingDirectory(currentDir);
+      pathToWorkingDirectory(directory);
     }
   } catch (err) {
     console.error(`Operation failed: "${folderName}".Please try again!`);
-    pathToWorkingDirectory(currentDir);
+    pathToWorkingDirectory(directory);
   }
 };
 

@@ -2,15 +2,16 @@ import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
-export const readFile = async (input) => {
+export const readFile = async (directory, input) => {
+  const pathToFile = `${directory}/${input}`;
   try {
-    await access(input, constants.F_OK);
+    await access(pathToFile, constants.F_OK);
 
-    const fileName = createReadStream(input);
+    const fileName = createReadStream(pathToFile);
 
     fileName.on("data", (chunk) =>
       process.stdout.write(
-        `${chunk}\nYou are currently in ${process.cwd()}\nEnter your command:`
+        `${chunk}\nYou are currently in ${directory}\nEnter your command:`
       )
     );
 
@@ -19,6 +20,6 @@ export const readFile = async (input) => {
     });
   } catch (err) {
     console.error("Operation failed:", err);
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(directory);
   }
 };
