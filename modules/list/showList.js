@@ -27,15 +27,14 @@ export const showCurrentDirectory = async () => {
 
     const sortedFiles = sortFiles(fileDetails);
 
-    process.stdout.write(`Index Name Type\n`);
-
-    sortedFiles.forEach((file, index) => {
-      const directory = file.isDirectory ? "directory" : "file";
-      process.stdout.write(`${index + 1} ${file.name} ${directory}\n`);
-    });
+    const dataDirectory = sortedFiles.map((file) => ({
+      Name: file.name,
+      Type: file.isDirectory ? "directory" : "file",
+    }));
+    console.table(dataDirectory);
   } catch (error) {
     console.error("Error reading directory:", err);
   } finally {
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(currentDirectory);
   }
 };
