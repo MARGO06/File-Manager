@@ -1,6 +1,6 @@
-export const pathToWorkingDirectory = () => {
+export const pathToWorkingDirectory = (currentDirectory) => {
   process.stdout.write(
-    `You are currently in ${process.cwd()}\nEnter your command:`
+    `You are currently in ${currentDirectory}\nEnter your command:`
   );
 };
 
@@ -16,18 +16,4 @@ export const manageFileOperation = async (command, executeFileOperation) => {
     return;
   }
   await executeFileOperation(oldPath, newPath);
-};
-
-export const manageOSFileOperation = async (
-  command,
-  executeOSFileOperation
-) => {
-  const argument = command[1];
-
-  if (!argument) {
-    console.log("Invalid input: please enter second argument.");
-    pathToWorkingDirectory();
-    return;
-  }
-  await executeOSFileOperation(argument);
 };

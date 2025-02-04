@@ -12,7 +12,6 @@ import { showCurrentDirectory } from "../list/showList.js";
 import {
   pathToWorkingDirectory,
   manageFileOperation,
-  manageOSFileOperation,
 } from "./directoryManagement.js";
 import {
   showArchitecture,
@@ -21,6 +20,9 @@ import {
   showHomeDir,
   showUser,
 } from "../os/osCommands.js";
+import { homedir } from "node:os";
+
+let currentDir = homedir();
 
 export const getUserName = () => {
   const commands = process.argv.slice(2);
@@ -28,36 +30,55 @@ export const getUserName = () => {
   return commands.find((item) => item.startsWith("--username=")).split("=")[1];
 };
 
-const changeAndVerifyDirectory = async (directory) => {
-  const dirname = process.cwd();
-  const newDirectory = path.resolve(dirname, directory);
+export const manageOSFileOperation = async (
+  command,
+  executeOSFileOperation
+) => {
+  const argument = command.slice(1).join(" ");
+
+  if (!argument) {
+    console.log("Invalid input: please enter second argument.");
+    pathToWorkingDirectory(currentDir);
+    return;
+  }
+  await executeOSFileOperation(argument);
+};
+
+export const changeAndVerifyDirectory = async (directory) => {
+  const newDirectory = path.resolve(currentDir, directory);
+
   try {
     await access(newDirectory, constants.F_OK);
     process.chdir(newDirectory);
+    currentDir = newDirectory;
+    pathToWorkingDirectory(newDirectory);
+    return newDirectory;
   } catch (err) {
-    console.error(`Failed to change directory to "${newDirectory}":`, err);
-  } finally {
-    pathToWorkingDirectory();
+    console.error(`Operation failed: "${newDirectory}".Please try again!`, err);
+    pathToWorkingDirectory(currentDir);
   }
 };
 
 export const goUp = async () => {
-  const dirname = process.cwd();
-  const newDir = path.resolve(dirname, "..");
+  const newDir = path.resolve(currentDir, "..");
 
-  if (dirname.endsWith("File-Manager")) {
+  const finalDirectory = homedir().split("\\").slice(0, 2).join("\\");
+
+  if (newDir === finalDirectory) {
     console.log("You are already at the root directory. Cannot go up.");
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(currentDir);
     return;
   }
 
   try {
     await access(newDir, constants.F_OK);
     process.chdir(newDir);
+    currentDir = newDir;
+    return newDir;
   } catch (err) {
     console.error("Cannot access parent directory.", err);
   } finally {
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(newDir);
   }
 };
 
@@ -87,13 +108,21 @@ export const showOSDetails = (argument) => {
 };
 
 export const moveOnFolders = async (folderName) => {
-  const validFolders = ["modules", "list", "fs", "files", "zip", "cli", "os"];
-
-  if (validFolders.includes(folderName)) {
-    await changeAndVerifyDirectory(folderName);
-  } else {
-    console.log(`Operation failed: "${folderName}".Please try again!`);
-    pathToWorkingDirectory();
+  try {
+    if (folderName) {
+      const newDir = await changeAndVerifyDirectory(folderName);
+      if (newDir !== undefined) {
+        currentDir = newDir;
+      }
+    } else {
+      console.log(
+        `Operation failed:"${folderName}" does not exist or cannot be accessed.`
+      );
+      pathToWorkingDirectory(currentDir);
+    }
+  } catch (err) {
+    console.error(`Operation failed: "${folderName}".Please try again!`);
+    pathToWorkingDirectory(currentDir);
   }
 };
 
