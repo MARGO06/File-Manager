@@ -2,9 +2,10 @@ import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
+import { resolve } from "node:path";
 
 export const calcHash = async (directory, path) => {
-  const fullPath = `${directory}/${path}`;
+  const fullPath = resolve(directory, path);
   const hash = createHash("sha256");
   try {
     await access(fullPath, constants.F_OK);

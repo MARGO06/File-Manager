@@ -1,12 +1,14 @@
 import { rename, access, constants } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
 
-export const renameFile = async (oldFile, newFile) => {
-  try {
-    await access(oldFile, constants.F_OK);
+export const renameFile = async (currentDirectory, oldFile, newFile) => {
+  const fullPath = resolve(currentDirectory, oldFile);
 
-    const directory = dirname(oldFile);
+  try {
+    await access(fullPath, constants.F_OK);
+
+    const directory = dirname(fullPath);
     const newFilePath = join(directory, newFile);
 
     try {
@@ -15,12 +17,12 @@ export const renameFile = async (oldFile, newFile) => {
       return;
     } catch (err) {
       if (err.code === "ENOENT") {
-        await rename(oldFile, newFilePath);
+        await rename(fullPath, newFilePath);
       }
     }
   } catch (err) {
     console.error("Operation failed:", err);
   } finally {
-    pathToWorkingDirectory();
+    pathToWorkingDirectory(currentDirectory);
   }
 };

@@ -9,10 +9,7 @@ import { renameFile } from "../fs/rename.js";
 import { createDirectory, createFile } from "../fs/create.js";
 import { readFile } from "../fs/read.js";
 import { showCurrentDirectory } from "../list/showList.js";
-import {
-  pathToWorkingDirectory,
-  manageFileOperation,
-} from "./directoryManagement.js";
+import { pathToWorkingDirectory } from "./directoryManagement.js";
 import {
   showArchitecture,
   showCPUS,
@@ -42,6 +39,22 @@ export const manageOSFileOperation = async (
     return;
   }
   await executeOSFileOperation(currentDir, argument);
+};
+
+export const manageFileOperation = async (command, executeFileOperation) => {
+  const sourceIndex = command.findIndex((arg) => path.extname(arg) !== "");
+
+  if (sourceIndex === -1 || sourceIndex === command.length - 1) {
+    console.log(
+      "Invalid input: both the path to the file and the new name of the file must be provided."
+    );
+    pathToWorkingDirectory(currentDir);
+    return;
+  }
+  const oldPath = command.slice(1, sourceIndex + 1).join(" ");
+
+  const newPath = command.slice(sourceIndex + 1).join(" ");
+  await executeFileOperation(currentDir, oldPath, newPath);
 };
 
 export const changeAndVerifyDirectory = async (directory) => {
@@ -140,7 +153,7 @@ export const changeDirectory = async (input) => {
       await goUp();
       break;
     case "ls":
-      await showCurrentDirectory();
+      await showCurrentDirectory(currentDir);
       break;
     case "cat":
       await manageOSFileOperation(command, readFile);
@@ -176,7 +189,7 @@ export const changeDirectory = async (input) => {
       await manageFileOperation(command, decompressFile);
       break;
     default:
-      console.log(`Operation failed: "${command[0]}".Please try again!`);
-      pathToWorkingDirectory();
+      console.log(`Invalid command: "${command[0]}".Please try again!`);
+      pathToWorkingDirectory(currentDir);
   }
 };

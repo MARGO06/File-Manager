@@ -1,5 +1,6 @@
 import { readdir, stat } from "node:fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
+import { resolve } from "node:path";
 
 const sortFiles = (filesDetails) => {
   return filesDetails.sort((a, b) => {
@@ -12,15 +13,14 @@ const sortFiles = (filesDetails) => {
   });
 };
 
-export const showCurrentDirectory = async () => {
-  const currentDirectory = process.cwd();
-
+export const showCurrentDirectory = async (currentDirectory) => {
   try {
     const files = await readdir(currentDirectory, { withFileTypes: true });
 
     const fileDetails = await Promise.all(
       files.map(async (file) => {
-        const fileStat = await stat(file.name);
+        const fullPath = resolve(currentDirectory, file.name);
+        const fileStat = await stat(fullPath);
         return { name: file.name, isDirectory: fileStat.isDirectory() };
       })
     );
@@ -32,7 +32,7 @@ export const showCurrentDirectory = async () => {
       Type: file.isDirectory ? "directory" : "file",
     }));
     console.table(dataDirectory);
-  } catch (error) {
+  } catch (err) {
     console.error("Error reading directory:", err);
   } finally {
     pathToWorkingDirectory(currentDirectory);

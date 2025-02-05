@@ -1,9 +1,10 @@
 import { createReadStream } from "node:fs";
 import { access, constants } from "node:fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
+import { resolve } from "node:path";
 
 export const readFile = async (directory, input) => {
-  const pathToFile = `${directory}/${input}`;
+  const pathToFile = resolve(directory, input);
   try {
     await access(pathToFile, constants.F_OK);
 

@@ -1,5 +1,6 @@
 import { writeFile, access, constants, mkdir } from "fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
+import { resolve } from "path";
 
 const checkPathExists = async (path) => {
   try {
@@ -13,7 +14,7 @@ const checkPathExists = async (path) => {
 };
 
 const handleFileCreation = async (directory, input, createFunc) => {
-  const fullPath = `${directory}/${input}`;
+  const fullPath = resolve(directory, input);
   const exists = await checkPathExists(fullPath);
   if (!exists) {
     await createFunc(fullPath);
