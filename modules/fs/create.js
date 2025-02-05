@@ -1,9 +1,10 @@
 import { writeFile, access, constants, mkdir } from "fs/promises";
 import { pathToWorkingDirectory } from "../cli/directoryManagement.js";
+import { resolve } from "path";
 
-const checkPathExists = async (name) => {
+const checkPathExists = async (path) => {
   try {
-    await access(`${process.cwd()}/${name}`, constants.F_OK);
+    await access(`${path}`, constants.F_OK);
     return true;
   } catch (err) {
     if (err.code === "ENOENT") {
@@ -12,20 +13,25 @@ const checkPathExists = async (name) => {
   }
 };
 
-const handleFileCreation = async (input, createFunc) => {
-  const exists = await checkPathExists(input);
+const handleFileCreation = async (directory, input, createFunc) => {
+  const fullPath = resolve(directory, input);
+  const exists = await checkPathExists(fullPath);
   if (!exists) {
-    await createFunc(input);
-    pathToWorkingDirectory();
+    await createFunc(fullPath);
+    pathToWorkingDirectory(directory);
   } else {
     throw new Error(`The file or directory "${input}" already exists.`);
   }
 };
 
-export const createFile = async (input) => {
-  await handleFileCreation(input, writeFile.bind(null, input, "", "utf8"));
+export const createFile = async (directory, input) => {
+  await handleFileCreation(directory, input, (fullPath) =>
+    writeFile(fullPath, "", "utf8")
+  );
 };
 
-export const createDirectory = async (input) => {
-  await handleFileCreation(input, mkdir.bind(null, input, { recursive: true }));
+export const createDirectory = async (directory, input) => {
+  await handleFileCreation(directory, input, (fullPath) =>
+    mkdir(fullPath, { recursive: true })
+  );
 };
